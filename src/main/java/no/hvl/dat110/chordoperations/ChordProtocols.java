@@ -6,6 +6,8 @@ package no.hvl.dat110.chordoperations;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 
@@ -15,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import no.hvl.dat110.middleware.Message;
 import no.hvl.dat110.middleware.Node;
 import no.hvl.dat110.rpc.interfaces.NodeInterface;
+import no.hvl.dat110.util.Hash;
 import no.hvl.dat110.util.Util;
 
 /**
@@ -171,7 +174,33 @@ public class ChordProtocols {
 			// then: use chordnode to find the successor of k. (i.e., succnode = chordnode.findSuccessor(k))
 			
 			// check that succnode is not null, then add it to the finger table
-
+			NodeInterface successorn = null;
+			List<NodeInterface> fintab = chordnode.getFingerTable();  
+			BigInteger modulus = Hash.addressSize();
+			int bits = Hash.bitSize();
+			for(int i = 0; i < bits; i++) {
+				BigInteger nextId = new BigInteger("2");
+				nextId = nextId.pow(i);
+				
+				BigInteger nodeId = chordnode.getNodeID().add(nextId);
+				nodeId = nodeId.mod(modulus);
+				
+			try {
+				successorn = chordnode.findSuccessor(nodeId);
+			} catch(RemoteException e) {
+				e.printStackTrace();
+			}
+				
+				
+				if(successorn != null) {
+					try {
+						fintab.set(i, successorn);
+					} catch(IndexOutOfBoundsException e) {
+						fintab.add(i, successorn);
+					}
+					
+				}
+			}
 		} catch (RemoteException e) {
 			//
 		}
