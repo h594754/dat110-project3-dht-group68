@@ -174,7 +174,7 @@ public class ChordProtocols {
 			// then: use chordnode to find the successor of k. (i.e., succnode = chordnode.findSuccessor(k))
 			
 			// check that succnode is not null, then add it to the finger table
-			NodeInterface successorn = null;
+			NodeInterface succnode = null;
 			List<NodeInterface> fintab = chordnode.getFingerTable();  
 			BigInteger modulus = Hash.addressSize();
 			int bits = Hash.bitSize();
@@ -186,17 +186,17 @@ public class ChordProtocols {
 				nodeId = nodeId.mod(modulus);
 				
 			try {
-				successorn = chordnode.findSuccessor(nodeId);
+				succnode = chordnode.findSuccessor(nodeId);
 			} catch(RemoteException e) {
 				e.printStackTrace();
 			}
 				
 				
-				if(successorn != null) {
+				if(succnode != null) {
 					try {
-						fintab.set(i, successorn);
+						fintab.set(i, succnode);
 					} catch(IndexOutOfBoundsException e) {
-						fintab.add(i, successorn);
+						fintab.add(i, succnode);
 					}
 					
 				}
